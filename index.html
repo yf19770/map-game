@@ -1,0 +1,58 @@
+<!-- index.html (Updated for Polish) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Game!</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Country Selection Screen (Visible by default) -->
+    <div id="country-selection" class="selection-container">
+        <h1>Map Game! <span class="earth-emoji">🌍</span></h1>
+        <p>Select a map to begin.</p>
+        <div class="country-choices">
+            <button class="country-button" data-country="india">India</button>
+            <button class="country-button" data-country="usa">United States</button>
+        </div>
+    </div>
+
+    <!-- Main Game Container (Hidden by default) -->
+    <div id="game-container" class="game-container hidden">
+        <header class="game-header">
+            <h1 id="game-title">Map Game!</h1>
+            <div class="progress-bar-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+        </header>
+
+        <main class="game-main">
+            <div id="map-container" class="map-container"></div>
+            <div id="game-controls" class="game-controls">
+                <div id="question-area" class="question-area">
+                    <p>The highlighted state is...</p>
+                </div>
+                <div id="choices-container" class="choices-container"></div>
+                <div id="completion-message" class="completion-message hidden">
+                    <h2>Congratulations!</h2>
+                    <p>You've identified all the states!</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="game-footer">
+            <div class="footer-buttons">
+                <button id="change-country-button" class="secondary-button">Change Country</button>
+                <button id="reset-button" class="reset-button">Reset Map</button>
+            </div>
+        </footer>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
