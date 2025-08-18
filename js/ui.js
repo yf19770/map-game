@@ -1,4 +1,3 @@
-// js/ui.js
 export class UI {
     constructor() {
         this.mapContainer = document.getElementById('map-container');
@@ -6,13 +5,14 @@ export class UI {
         this.questionArea = document.getElementById('question-area');
         this.completionMessage = document.getElementById('completion-message');
         this.progressBar = document.getElementById('progress-bar');
+        this.progressText = document.getElementById('progress-text'); 
         this.gameTitle = document.getElementById('game-title');
-        this.gameContainer = document.getElementById('game-container');
+        this.uiPanel = document.getElementById('ui-panel'); 
     }
 
     async renderMap(mapPath, countryName) {
         try {
-            this.gameTitle.textContent = `How well do you know ${countryName}?`;
+            this.gameTitle.textContent = `Map of ${countryName}`; 
             const response = await fetch(mapPath);
             if (!response.ok) throw new Error('Map not found');
             const svgData = await response.text();
@@ -26,6 +26,7 @@ export class UI {
     updateProgressBar(current, total) {
         const percentage = total > 0 ? (current / total) * 100 : 0;
         this.progressBar.style.width = `${percentage}%`;
+        this.progressText.textContent = `${current} / ${total}`; 
     }
 
     updateMapStyles(correctStates) {
@@ -49,7 +50,7 @@ export class UI {
             const button = document.createElement('button');
             button.className = 'choice-button';
             button.textContent = choice.name;
-            button.dataset.stateId = choice.id; // Store ID for feedback
+            button.dataset.stateId = choice.id; 
             button.onclick = () => {
                 this.disableChoices();
                 checkAnswerCallback(choice.name, button);
@@ -64,9 +65,8 @@ export class UI {
     showAnswerFeedback(isCorrect, button) {
         button.classList.add(isCorrect ? 'correct-feedback' : 'incorrect-feedback');
         if (!isCorrect) {
-            this.gameContainer.classList.add('shake-animation');
-            // Remove the shake animation after it's done
-            setTimeout(() => this.gameContainer.classList.remove('shake-animation'), 500);
+            this.uiPanel.classList.add('shake-animation'); // Shake the panel now
+            setTimeout(() => this.uiPanel.classList.remove('shake-animation'), 500);
         }
     }
 

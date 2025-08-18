@@ -66,7 +66,7 @@ export class Game {
         const isCorrect = selectedName === correctState.name;
 
         this.ui.showAnswerFeedback(isCorrect, button);
-        // new Audio(isCorrect ? './sounds/correct.mp3' : './sounds/incorrect.mp3').play();
+        new Audio(isCorrect ? './sounds/correct.mp3' : './sounds/incorrect.mp3').play();
 
         if (isCorrect) {
             this.correctlyGuessed.push(correctState.id);

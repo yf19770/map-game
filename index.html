@@ -1,56 +1,72 @@
-<!-- index.html (Updated for Polish) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map Game!</title>
+    <title>Geo Genius</title> 
+    <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="styles/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <!-- Country Selection Screen (Visible by default) -->
-    <div id="country-selection" class="selection-container">
-        <h1>Map Game! <span class="earth-emoji">🌍</span></h1>
-        <p>Select a map to begin.</p>
-        <div class="country-choices">
-            <button class="country-button" data-country="india">India</button>
-            <button class="country-button" data-country="usa">United States</button>
+    <div id="app-shell">
+        <div class="background-texture"></div>
+
+        <div id="country-selection" class="selection-container">
+            <div class="selection-content">
+                <h1>Geo Genius<span class="earth-emoji">🌍</span></h1>
+                <p>Select a map to begin your challenge.</p>
+                <div class="country-choices">
+                    <button class="country-button" data-country="india">
+                        <span class="map-bg" style="--bg-image: url(../maps/india.svg)"></span>
+                        <span class="country-name">India</span>
+                    </button>
+                    <button class="country-button" data-country="usa">
+                        <span class="map-bg" style="--bg-image: url(../maps/usa.svg)"></span>
+                        <span class="country-name">United States</span>
+                    </button>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <!-- Main Game Container (Hidden by default) -->
-    <div id="game-container" class="game-container hidden">
-        <header class="game-header">
-            <h1 id="game-title">Map Game!</h1>
-            <div class="progress-bar-container">
-                <div id="progress-bar" class="progress-bar"></div>
-            </div>
-        </header>
+        <div id="game-container" class="game-container hidden">
 
-        <main class="game-main">
-            <div id="map-container" class="map-container"></div>
-            <div id="game-controls" class="game-controls">
-                <div id="question-area" class="question-area">
-                    <p>The highlighted state is...</p>
-                </div>
-                <div id="choices-container" class="choices-container"></div>
-                <div id="completion-message" class="completion-message hidden">
-                    <h2>Congratulations!</h2>
-                    <p>You've identified all the states!</p>
-                </div>
-            </div>
-        </main>
+            <aside id="ui-panel" class="ui-panel">
+                <header class="game-header">
+                    <h1 id="game-title">Identify the State</h1>
+                    <div class="progress-container">
+                         <span id="progress-text" class="progress-text">0 / 0</span>
+                        <div class="progress-bar-container">
+                            <div id="progress-bar" class="progress-bar"></div>
+                        </div>
+                    </div>
+                </header>
 
-        <footer class="game-footer">
-            <div class="footer-buttons">
-                <button id="change-country-button" class="secondary-button">Change Country</button>
-                <button id="reset-button" class="reset-button">Reset Map</button>
-            </div>
-        </footer>
+                <main id="game-controls" class="game-controls">
+                    <div id="question-area" class="question-area">
+                        <p>The highlighted region is...</p>
+                    </div>
+                    <div id="choices-container" class="choices-container"></div>
+                    <div id="completion-message" class="completion-message hidden">
+                        <h2>Perfect Score!</h2>
+                        <p>You've mastered the map of this nation.</p>
+                    </div>
+                </main>
+
+                <footer class="game-footer">
+                    <button id="change-country-button" class="secondary-button">Change Map</button>
+                    <button id="reset-button" class="reset-button">Reset Progress</button>
+                </footer>
+            </aside>
+
+            <main id="map-panel" class="map-panel">
+                <div id="map-container"></div>
+            </main>
+
+        </div>
     </div>
 
     <script type="module" src="js/app.js"></script>
