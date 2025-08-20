@@ -65,7 +65,7 @@ export class Game {
         this.ui.updateProgressBar(this.correctlyGuessed.length, this.allStates.length);
         const remainingStates = this.allStates.filter(s => !this.correctlyGuessed.includes(s.id));
 
-        if (remainingStates.length === 0) {
+          if (remainingStates.length === 0) {
             const duration = Date.now() - this.startTime;
             
             const gameStats = {
@@ -78,12 +78,14 @@ export class Game {
             this.ui.showCompletionScreen(gameStats);
             this.ui.showFinalMapResults(this.incorrectlyGuessed); 
             
+            const totalQuestions = this.allStates.length;
+            const accuracy = totalQuestions + this.mistakesMade === 0 ? 100 : (totalQuestions / (totalQuestions + this.mistakesMade)) * 100;
             trackEvent('game_completed', {
                 country_name: this.countryData.name,
                 mistakes: this.mistakesMade,
                 duration_seconds: Math.round(duration / 1000),
                 accuracy_percentage: parseFloat(accuracy.toFixed(1)), 
-                total_questions: totalQuestions  
+                total_questions: totalQuestions
             });
             return;
         }
