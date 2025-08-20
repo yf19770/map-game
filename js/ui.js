@@ -1,4 +1,5 @@
-// js/ui.js (Updated with summary screen logic)
+// js/ui.js
+
 export class UI {
     constructor() {
         this.mapContainer = document.getElementById('map-container');
@@ -10,8 +11,6 @@ export class UI {
         this.gameTitle = document.getElementById('game-title');
         this.uiPanel = document.getElementById('ui-panel'); 
         this.mistakesCounter = document.getElementById('mistakes-counter');
-        
-        // Summary card elements
         this.completionTitle = document.getElementById('completion-title');
         this.completionSubtitle = document.getElementById('completion-subtitle');
         this.summaryTime = document.getElementById('summary-time');
@@ -19,7 +18,6 @@ export class UI {
         this.summaryMistakes = document.getElementById('summary-mistakes');
     }
 
-    // Helper to format milliseconds into m s format
     formatDuration(ms) {
         if (ms < 0) ms = 0;
         const totalSeconds = Math.floor(ms / 1000);
@@ -31,7 +29,6 @@ export class UI {
         return `${seconds}s`;
     }
 
-    // ... renderMap, updateProgressBar, updateMapStyles, highlightState, displayChoices, showAnswerFeedback, disableChoices, updateMistakes are unchanged ...
     async renderMap(mapPath, countryName) {
         try {
             this.gameTitle.textContent = `Map of ${countryName}`; 
@@ -44,24 +41,54 @@ export class UI {
             this.mapContainer.innerHTML = '<p>Could not load the map.</p>';
         }
     }
+    
     updateProgressBar(current, total) {
         const percentage = total > 0 ? (current / total) * 100 : 0;
         this.progressBar.style.width = `${percentage}%`;
         this.progressText.textContent = `${current} / ${total}`; 
     }
+
     updateMapStyles(correctStates) {
         const paths = this.mapContainer.querySelectorAll('svg .state');
+        this.removePulseEffect(); 
+        
         paths.forEach(path => {
-            path.classList.remove('highlighted', 'correct');
+            path.classList.remove('highlighted', 'correct', 'incorrect-final');
             if (correctStates.includes(path.id)) {
                 path.classList.add('correct');
             }
         });
     }
-    highlightState(stateId) {
+
+      highlightState(stateId) {
         const path = document.getElementById(stateId);
-        if (path) path.classList.add('highlighted');
+        if (!path) return;
+
+        // Apply the standard highlight class to the original state
+        path.classList.add('highlighted');
+
+        // Create the pulsing clone
+        const clone = path.cloneNode(true);
+        clone.removeAttribute('id'); 
+        clone.classList.remove('highlighted'); 
+        clone.classList.add('pulsing-clone'); 
+
+        const bbox = path.getBBox();
+        const centerX = bbox.x + bbox.width / 2;
+        const centerY = bbox.y + bbox.height / 2;
+        clone.style.transformOrigin = `${centerX}px ${centerY}px`;
+    
+        path.parentNode.appendChild(path);
+        path.parentNode.insertBefore(clone, path);
     }
+    
+    removePulseEffect() {
+        const existingClone = this.mapContainer.querySelector('.pulsing-clone');
+        if (existingClone) {
+            existingClone.remove();
+        }
+    }
+
     displayChoices(choices, checkAnswerCallback) {
         this.choicesContainer.innerHTML = '';
         choices.forEach(choice => {
@@ -79,6 +106,7 @@ export class UI {
         this.choicesContainer.classList.remove('hidden');
         this.completionMessage.classList.add('hidden');
     }
+
     showAnswerFeedback(isCorrect, button) {
         button.classList.add(isCorrect ? 'correct-feedback' : 'incorrect-feedback');
         if (!isCorrect) {
@@ -86,9 +114,11 @@ export class UI {
             setTimeout(() => this.uiPanel.classList.remove('shake-animation'), 500);
         }
     }
+    
     disableChoices() {
         this.choicesContainer.querySelectorAll('.choice-button').forEach(b => b.disabled = true);
     }
+
     updateMistakes(count) {
         if (count > 0) {
             this.mistakesCounter.textContent = `Mistakes: ${count}`;
@@ -96,6 +126,26 @@ export class UI {
         } else {
             this.mistakesCounter.classList.remove('visible');
         }
+    }
+
+    showFinalMapResults(incorrectlyGuessedIds) {
+        this.removePulseEffect(); // Clean up any active pulse
+        const paths = this.mapContainer.querySelectorAll('svg .state');
+
+        paths.forEach(path => {
+            // Remove any temporary styling
+            path.classList.remove('highlighted');
+
+            if (incorrectlyGuessedIds.includes(path.id)) {
+                // This state had at least one mistake
+                path.classList.remove('correct');
+                path.classList.add('incorrect-final');
+            } else {
+                // This state was answered correctly on the first try
+                path.classList.remove('incorrect-final');
+                path.classList.add('correct');
+            }
+        });
     }
 
     showCompletionScreen({ mistakes, duration, totalQuestions }) {

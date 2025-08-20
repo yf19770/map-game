@@ -58,23 +58,5 @@ document.addEventListener('DOMContentLoaded', () => {
         showSelectionScreen();
     });
 
-    // --- DEV BUTTONS LOGIC ---
-    document.getElementById('dev-perfect').addEventListener('click', () => {
-        const randomTime = Math.random() * (180000 - 30000) + 30000; // 30s to 3m
-        ui.showCompletionScreen({
-            mistakes: 0,
-            duration: randomTime,
-            totalQuestions: 50 // Simulate a map with 50 states
-        });
-    });
-
-    document.getElementById('dev-imperfect').addEventListener('click', () => {
-        const randomTime = Math.random() * (300000 - 60000) + 60000; // 1m to 5m
-        const randomMistakes = Math.floor(Math.random() * 10) + 1; // 1 to 10 mistakes
-        ui.showCompletionScreen({
-            mistakes: randomMistakes,
-            duration: randomTime,
-            totalQuestions: 50 // Simulate a map with 50 states
-        });
-    });
+    
 });

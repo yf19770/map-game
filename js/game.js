@@ -1,4 +1,3 @@
-// js/game.js (Updated with timer logic)
 import { trackEvent } from './analytics.js';
 
 export class Game {
@@ -7,13 +6,18 @@ export class Game {
         this.countryData = countryData;
         this.allStates = [];
         this.correctlyGuessed = [];
+        this.incorrectlyGuessed = []; 
         this.currentQuestionStateId = null;
         this.mistakesMade = 0;
-        this.startTime = null; // To track game duration
+        this.startTime = null;
+    }
+
+    getStatsStorageKey() {
+        return this.countryData.storageKey + '_stats';
     }
 
     async start() {
-        this.startTime = Date.now(); // Start the timer
+        this.startTime = Date.now();
         await this.ui.renderMap(this.countryData.svgUrl, this.countryData.name);
         this.loadStateDataFromSVG();
         
@@ -22,10 +26,31 @@ export class Game {
             return;
         }
 
-        this.loadProgress();
+        if (this.loadAndDisplayCompletionStats()) {
+            return; 
+        }
+
+        this.loadProgress(); 
         this.ui.updateMapStyles(this.correctlyGuessed);
         this.ui.updateMistakes(this.mistakesMade);
         this.nextQuestion();
+    }
+
+    loadAndDisplayCompletionStats() {
+        const statsData = localStorage.getItem(this.getStatsStorageKey());
+        if (statsData) {
+            const stats = JSON.parse(statsData);
+            this.correctlyGuessed = this.allStates.map(s => s.id);
+            this.loadProgress();
+            this.ui.showFinalMapResults(this.incorrectlyGuessed);
+            this.ui.showCompletionScreen(stats);
+            return true;
+        }
+        return false;
+    }
+    
+    saveCompletionStats(stats) {
+        localStorage.setItem(this.getStatsStorageKey(), JSON.stringify(stats));
     }
 
     loadStateDataFromSVG() {
@@ -41,20 +66,24 @@ export class Game {
         const remainingStates = this.allStates.filter(s => !this.correctlyGuessed.includes(s.id));
 
         if (remainingStates.length === 0) {
-            const duration = Date.now() - this.startTime; // Calculate final time
-            this.ui.updateMapStyles(this.correctlyGuessed);
+            const duration = Date.now() - this.startTime;
             
-            // Pass all stats to the UI for the summary card
-            this.ui.showCompletionScreen({
+            const gameStats = {
                 mistakes: this.mistakesMade,
                 duration: duration,
                 totalQuestions: this.allStates.length
-            });
+            };
+            
+            this.saveCompletionStats(gameStats);
+            this.ui.showCompletionScreen(gameStats);
+            this.ui.showFinalMapResults(this.incorrectlyGuessed); 
             
             trackEvent('game_completed', {
                 country_name: this.countryData.name,
                 mistakes: this.mistakesMade,
                 duration_seconds: Math.round(duration / 1000),
+                accuracy_percentage: parseFloat(accuracy.toFixed(1)), 
+                total_questions: totalQuestions  
             });
             return;
         }
@@ -99,28 +128,47 @@ export class Game {
             setTimeout(() => this.nextQuestion(), 800);
         } else {
             this.mistakesMade++;
+            if (!this.incorrectlyGuessed.includes(correctState.id)) {
+                this.incorrectlyGuessed.push(correctState.id);
+            }
             this.ui.updateMistakes(this.mistakesMade);
+            this.saveProgress(); 
             setTimeout(() => this.nextQuestion(), 1200);
         }
     }
-
+    
     saveProgress() {
-        localStorage.setItem(this.countryData.storageKey, JSON.stringify(this.correctlyGuessed));
+        const progressData = {
+            correctlyGuessed: this.correctlyGuessed,
+            incorrectlyGuessed: this.incorrectlyGuessed, 
+            mistakesMade: this.mistakesMade
+        };
+        localStorage.setItem(this.countryData.storageKey, JSON.stringify(progressData));
     }
 
     loadProgress() {
-        const savedData = localStorage.getItem(this.countryData.storageKey);
-        if (savedData) this.correctlyGuessed = JSON.parse(savedData);
-        this.mistakesMade = 0; 
+        const savedJSON = localStorage.getItem(this.countryData.storageKey);
+        if (savedJSON) {
+            const savedData = JSON.parse(savedJSON);
+            this.correctlyGuessed = savedData.correctlyGuessed || [];
+            this.incorrectlyGuessed = savedData.incorrectlyGuessed || []; 
+            this.mistakesMade = savedData.mistakesMade || 0;
+        } else {
+            this.correctlyGuessed = [];
+            this.incorrectlyGuessed = []; 
+            this.mistakesMade = 0;
+        }
     }
 
     reset() {
         trackEvent('reset_game', { country_name: this.countryData.name });
         
         this.correctlyGuessed = [];
+        this.incorrectlyGuessed = []; 
         this.mistakesMade = 0;
-        this.startTime = Date.now(); // Reset timer on reset
+        this.startTime = Date.now(); 
         localStorage.removeItem(this.countryData.storageKey);
+        localStorage.removeItem(this.getStatsStorageKey()); 
         this.ui.updateMistakes(this.mistakesMade);
         this.nextQuestion();
     }

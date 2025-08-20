@@ -98,6 +98,28 @@ body {
 }
 .country-button:hover .country-name { color: var(--accent-color); }
 
+/* --- Creator Credit --- */
+.creator-credit {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-decoration: none;
+    color: var(--text-secondary);
+    opacity: 0.6;
+    
+    /* Smooth transition for hover */
+    transition: all 0.3s ease;
+}
+
+.creator-credit:hover {
+    color: var(--accent-color);
+    opacity: 1;
+    transform: translateY(-5px); /* Subtle slide effect on hover */
+}
+
 /* --- Game Container (Split-Screen Layout) --- */
 .game-container {
     display: grid;
@@ -124,6 +146,10 @@ body {
 }
 .state.correct { fill: var(--correct-state); }
 
+.state.incorrect-final {
+    fill: var(--incorrect-feedback-color);
+}
+
 /* UI Panel (Left Side / Bottom Sheet) */
 .ui-panel {
     background-color: var(--ui-panel-bg);
@@ -149,7 +175,7 @@ body {
 .progress-bar-container { background: rgba(0,0,0,0.3); border-radius: 99px; overflow: hidden; height: 0.5rem; }
 .progress-bar { width: 0%; height: 100%; background: var(--accent-color); transition: width 0.5s ease-out; }
 
-.game-controls { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+.game-controls { flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; }
 .game-controls p { font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem; text-align: center; }
 .choices-container { display: grid; grid-template-columns: 1fr; gap: 0.75rem; }
 .choice-button {
@@ -178,19 +204,25 @@ body {
 .reset-button { background-color: rgba(251, 113, 133, 0.2); color: var(--incorrect-feedback-color); }
 .reset-button:hover { background-color: rgba(251, 113, 133, 0.4); }
 
-/* --- DEV BUTTONS --- */
-.dev-button {
-    flex-basis: 100%; /* Make them take full width */
-    margin-top: 0.5rem;
-    background-color: #581c87; /* Purple */
-    color: white;
-    border: none;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-}
-/* For production, hide dev buttons with: .dev-button { display: none; } */
 
+.pulsing-clone {
+    fill: #ffcc008f; 
+    filter: blur(10px);
+    stroke: none; 
+    pointer-events: none; 
+        animation: pulse-effect 1.5s infinite ease-out;
+}
+
+@keyframes pulse-effect {
+    0% {
+        transform: scale(0.7);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1.8); 
+        opacity: 0;
+    }
+}
 
 /* --- Summary Card Styles --- */
 .completion-message { 
@@ -277,6 +309,10 @@ body {
 .shake-animation { animation: shake 0.5s ease-out; }
 @keyframes shake { 0%,100% {transform:translateX(0)} 10%,30%,50%,70%,90% {transform:translateX(-5px)} 20%,40%,60%,80% {transform:translateX(5px)} }
 
+
+
+
+
 /* --- Mobile Layout --- */
 @media (max-width: 768px) {
     .selection-content { padding: 1rem; margin-top: 100px;}
@@ -285,6 +321,16 @@ body {
     .country-button { width: 90vw; max-width: 320px; height: 180px; }
     .country-button .map-bg { margin-bottom: 0px;}
     .country-name { font-size: 1.25rem; bottom: 1rem; }
+
+    .creator-credit {
+        position: static; 
+        display: block; 
+        margin: 3rem auto 2rem auto;
+        transform: none; 
+    }
+    .creator-credit:hover {
+        transform: translateY(-3px); /* Keep a subtle lift on hover */
+    }
 
     #map-container svg {max-height: 60vh;}
     .game-container {
@@ -307,7 +353,7 @@ body {
     }
 
     .choice-button {
-        border-radius: 99px; /* Keep the pill shape */
+        border-radius: 10px; /* Keep the pill shape */
         padding: 0.6rem 0.5rem; /* REDUCED: Less padding above/below and on sides */
         font-size: 0.85rem; /* REDUCED: Smaller font to fit better */
         text-align: center;
