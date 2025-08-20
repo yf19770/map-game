@@ -1,4 +1,3 @@
-
 :root {
     --bg-color: #111827; 
     --ui-panel-bg: rgba(31, 41, 55, 0.6); 
@@ -52,9 +51,6 @@ body {
 /* --- Global Animations --- */
 .hidden { display: none !important; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
-@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-@keyframes slideDown { from { transform: translateY(0); } to { transform: translateY(100%); } }
 .earth-emoji { display: inline-block; animation: spin 12s linear infinite; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
@@ -93,18 +89,15 @@ body {
     filter: invert(1); 
     transition: opacity 0.3s ease;
 }
-.country-button:hover .map-bg { 
-    opacity: 0.4; 
-}
+.country-button:hover .map-bg { opacity: 0.4; }
 .country-name {
     position: absolute; bottom: 2rem; left: 0; right: 0;
     font-size: 1.75rem; font-weight: 600;
     color: var(--text-primary); 
     transition: color 0.3s ease; 
 }
-.country-button:hover .country-name {
-    color: var(--accent-color);
-}
+.country-button:hover .country-name { color: var(--accent-color); }
+
 /* --- Game Container (Split-Screen Layout) --- */
 .game-container {
     display: grid;
@@ -115,32 +108,19 @@ body {
 }
 
 /* Map Panel (Right side) */
-.map-panel {
-    display: flex; align-items: center; justify-content: center;
-}
+.map-panel { display: flex; align-items: center; justify-content: center; }
 #map-container {
-    width: 90%;
-    height: 90%; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 90%; height: 90%; 
+    display: flex; align-items: center; justify-content: center;
     filter: drop-shadow(0 10px 20px var(--shadow-color));
 }
-
-/* This is the magic rule that fixes the tall map */
-#map-container svg {
-    width: 100%;
-    height: auto;
-    max-width: 100%;
-    max-height: 90vh;
-}
+#map-container svg { width: 100%; height: auto; max-width: 100%; max-height: 90vh; }
 .state {
     fill: var(--default-state); stroke: var(--bg-color);
     stroke-width: 1px; transition: all 0.3s ease;
 }
 .state.highlighted {
     fill: var(--highlighted-state); stroke: var(--highlight-stroke); stroke-width: 2.5px;
-
 }
 .state.correct { fill: var(--correct-state); }
 
@@ -157,7 +137,15 @@ body {
 /* UI Panel Content Styling */
 .game-header h1 { font-weight: 600; font-size: 1rem; color: var(--text-secondary); margin: 0; }
 .progress-container { margin-top: 1rem; }
-.progress-text { display: block; text-align: right; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-secondary); }
+.stats-bar { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; }
+.progress-text { margin-bottom: 0; display: block; font-size: 0.9rem; color: var(--text-secondary); }
+.mistakes-counter {
+    font-size: 0.9rem; font-weight: 600; color: var(--incorrect-feedback-color);
+    background-color: rgba(251, 113, 133, 0.15);
+    padding: 0.1rem 0.5rem; border-radius: 99px;
+    opacity: 0; transition: opacity 0.3s ease;
+}
+.mistakes-counter.visible { opacity: 1; }
 .progress-bar-container { background: rgba(0,0,0,0.3); border-radius: 99px; overflow: hidden; height: 0.5rem; }
 .progress-bar { width: 0%; height: 100%; background: var(--accent-color); transition: width 0.5s ease-out; }
 
@@ -174,24 +162,125 @@ body {
 .choice-button.correct-feedback { border-color: var(--correct-state); background: rgba(52, 211, 153, 0.1); }
 .choice-button.incorrect-feedback { border-color: var(--incorrect-feedback-color); background: rgba(251, 113, 133, 0.1); }
 
-.game-footer { display: flex; gap: 1rem; margin-top: 1.5rem; }
+.game-footer { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
 .secondary-button, .reset-button {
     flex: 1; padding: 0.8rem; border-radius: 0.75rem; border: none;
     font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s;
+}
+.game-footer button svg {
+    display: none; /* Hide icons on desktop by default */
+}
+.game-footer button span {
+    display: inline; /* Ensure text is visible */
 }
 .secondary-button { background-color: var(--default-state); color: var(--text-primary); }
 .secondary-button:hover { background-color: #6b7280; }
 .reset-button { background-color: rgba(251, 113, 133, 0.2); color: var(--incorrect-feedback-color); }
 .reset-button:hover { background-color: rgba(251, 113, 133, 0.4); }
 
-.completion-message h2 { font-family: var(--font-display); letter-spacing: 1px; font-size: 2.5rem; text-align: center; }
+/* --- DEV BUTTONS --- */
+.dev-button {
+    flex-basis: 100%; /* Make them take full width */
+    margin-top: 0.5rem;
+    background-color: #581c87; /* Purple */
+    color: white;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+/* For production, hide dev buttons with: .dev-button { display: none; } */
+
+
+/* --- Summary Card Styles --- */
+.completion-message { 
+    text-align: center; 
+    animation: fadeIn 0.5s ease-out;
+}
+.completion-message h2 { font-family: var(--font-display); letter-spacing: 1px; font-size: 2.5rem; margin-bottom: 0.25rem; }
+.completion-message #completion-subtitle { font-size: 1.1rem; color: var(--text-secondary); margin-top: 0; }
+
+.summary-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.stat-item {
+    --stat-color: var(--text-secondary); /* Default color */
+    background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0));
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--stat-color);
+    border-radius: 1rem;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas: 
+        "icon label"
+        "icon value";
+    align-items: center;
+    gap: 0 1rem;
+    opacity: 0; /* For animation */
+    animation: popIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    transition: transform 0.2s ease-out;
+}
+.stat-item:hover {
+    transform: scale(1.03);
+}
+
+/* Staggered animation */
+#accuracy-stat-item { animation-delay: 0.1s; }
+#mistakes-stat-item { animation-delay: 0.2s; }
+
+/* Color theming */
+#time-stat-item     { --stat-color: var(--accent-color); }
+#accuracy-stat-item { --stat-color: var(--correct-state); }
+#mistakes-stat-item { --stat-color: var(--incorrect-feedback-color); }
+
+.stat-icon {
+    grid-area: icon;
+    color: var(--stat-color);
+}
+.stat-icon svg {
+    width: 32px;
+    height: 32px;
+}
+.stat-label {
+    grid-area: label;
+    text-align: left;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+.stat-value {
+    grid-area: value;
+    text-align: left;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 
 .shake-animation { animation: shake 0.5s ease-out; }
 @keyframes shake { 0%,100% {transform:translateX(0)} 10%,30%,50%,70%,90% {transform:translateX(-5px)} 20%,40%,60%,80% {transform:translateX(5px)} }
 
 /* --- Mobile Layout --- */
 @media (max-width: 768px) {
-    .selection-content { padding: 1rem; }
+    .selection-content { padding: 1rem; margin-top: 100px;}
+    .selection-container {overflow: auto;}
     .country-choices { flex-direction: column; gap: 1rem; align-items: center; }
     .country-button { width: 90vw; max-width: 320px; height: 180px; }
     .country-button .map-bg { margin-bottom: 0px;}
@@ -200,7 +289,7 @@ body {
     #map-container svg {max-height: 60vh;}
     .game-container {
         grid-template-columns: 1fr;
-        grid-template-rows: 0fr auto; 
+        grid-template-rows: auto 1fr; 
         padding: 0; gap: 0;
     }
     .map-panel { align-items: flex-end; padding-bottom: 2rem; }
@@ -210,5 +299,77 @@ body {
         padding: 1rem; padding-top: 1.5rem;
     }
     .game-controls p { font-size: 1.2rem; margin-top: 1.5rem; }
-    .choices-container { grid-template-columns: 1fr 1fr; }
+    
+    .choices-container { 
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Back to a 3-column grid */
+        gap: 0.5rem; /* Tighter gap between buttons */
+    }
+
+    .choice-button {
+        border-radius: 99px; /* Keep the pill shape */
+        padding: 0.6rem 0.5rem; /* REDUCED: Less padding above/below and on sides */
+        font-size: 0.85rem; /* REDUCED: Smaller font to fit better */
+        text-align: center;
+
+        /* Gracefully handle long names if they still don't fit */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+
+.game-footer {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 10;
+    margin-top: 0;
+    gap: 0.75rem;
+    /* Remove footer-like styling */
+    background: none;
+    padding: 0;
+}
+
+/* Hide the dev buttons on mobile for a cleaner UI */
+.dev-button {
+    display: none;
+}
+
+/* Transform the main buttons into circular icons */
+.secondary-button, .reset-button {
+    flex: 0 0 48px; /* Set a fixed size */
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+.secondary-button {
+    background-color: var(--ui-panel-bg);
+    border: 1px solid var(--border-color);
+}
+.reset-button {
+     background-color: var(--ui-panel-bg);
+     border: 1px solid var(--border-color);
+}
+
+/* Swap text for icon */
+.game-footer button span {
+    display: none; /* Hide text on mobile */
+}
+.game-footer button svg {
+    display: block; /* Show icons on mobile */
+    width: 24px;
+    height: 24px;
+}
+.reset-button svg {
+    color: var(--incorrect-feedback-color);
+}
+
+
+
 }

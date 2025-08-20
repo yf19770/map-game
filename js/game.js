@@ -1,14 +1,19 @@
-// js/game.js
+// js/game.js (Updated with timer logic)
+import { trackEvent } from './analytics.js';
+
 export class Game {
     constructor(ui, countryData) {
         this.ui = ui;
-        this.countryData = countryData; // { name, svgUrl, storageKey }
+        this.countryData = countryData;
         this.allStates = [];
         this.correctlyGuessed = [];
         this.currentQuestionStateId = null;
+        this.mistakesMade = 0;
+        this.startTime = null; // To track game duration
     }
 
     async start() {
+        this.startTime = Date.now(); // Start the timer
         await this.ui.renderMap(this.countryData.svgUrl, this.countryData.name);
         this.loadStateDataFromSVG();
         
@@ -19,6 +24,7 @@ export class Game {
 
         this.loadProgress();
         this.ui.updateMapStyles(this.correctlyGuessed);
+        this.ui.updateMistakes(this.mistakesMade);
         this.nextQuestion();
     }
 
@@ -35,8 +41,21 @@ export class Game {
         const remainingStates = this.allStates.filter(s => !this.correctlyGuessed.includes(s.id));
 
         if (remainingStates.length === 0) {
+            const duration = Date.now() - this.startTime; // Calculate final time
             this.ui.updateMapStyles(this.correctlyGuessed);
-            this.ui.showCompletionScreen();
+            
+            // Pass all stats to the UI for the summary card
+            this.ui.showCompletionScreen({
+                mistakes: this.mistakesMade,
+                duration: duration,
+                totalQuestions: this.allStates.length
+            });
+            
+            trackEvent('game_completed', {
+                country_name: this.countryData.name,
+                mistakes: this.mistakesMade,
+                duration_seconds: Math.round(duration / 1000),
+            });
             return;
         }
 
@@ -65,6 +84,12 @@ export class Game {
         const correctState = this.allStates.find(s => s.id === this.currentQuestionStateId);
         const isCorrect = selectedName === correctState.name;
 
+        trackEvent('answer_given', {
+            country_name: this.countryData.name,
+            state_name: correctState.name,
+            is_correct: isCorrect
+        });
+
         this.ui.showAnswerFeedback(isCorrect, button);
         new Audio(isCorrect ? './sounds/correct.mp3' : './sounds/incorrect.mp3').play();
 
@@ -73,6 +98,8 @@ export class Game {
             this.saveProgress();
             setTimeout(() => this.nextQuestion(), 800);
         } else {
+            this.mistakesMade++;
+            this.ui.updateMistakes(this.mistakesMade);
             setTimeout(() => this.nextQuestion(), 1200);
         }
     }
@@ -84,11 +111,17 @@ export class Game {
     loadProgress() {
         const savedData = localStorage.getItem(this.countryData.storageKey);
         if (savedData) this.correctlyGuessed = JSON.parse(savedData);
+        this.mistakesMade = 0; 
     }
 
     reset() {
+        trackEvent('reset_game', { country_name: this.countryData.name });
+        
         this.correctlyGuessed = [];
+        this.mistakesMade = 0;
+        this.startTime = Date.now(); // Reset timer on reset
         localStorage.removeItem(this.countryData.storageKey);
+        this.ui.updateMistakes(this.mistakesMade);
         this.nextQuestion();
     }
 }
