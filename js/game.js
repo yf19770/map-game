@@ -127,7 +127,7 @@ export class Game {
         if (isCorrect) {
             this.correctlyGuessed.push(correctState.id);
             this.saveProgress();
-            setTimeout(() => this.nextQuestion(), 800);
+            setTimeout(() => this.nextQuestion(), 400);
         } else {
             this.mistakesMade++;
             if (!this.incorrectlyGuessed.includes(correctState.id)) {
@@ -135,7 +135,7 @@ export class Game {
             }
             this.ui.updateMistakes(this.mistakesMade);
             this.saveProgress(); 
-            setTimeout(() => this.nextQuestion(), 1200);
+            setTimeout(() => this.nextQuestion(), 600);
         }
     }
     
