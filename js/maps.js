@@ -9,6 +9,12 @@ export const MAP_DATA = {
         name: "United States",
         svgUrl: "./maps/usa.svg",
         storageKey: "usaMapGameProgress"
+    },
+ 
+    europe: {
+        name: "Europe",
+        svgUrl: "./maps/europe.svg",
+        storageKey: "europeMapGameProgress",
+        regionType: "Country" 
     }
-    // Add new countries here in the future
 };

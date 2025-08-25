@@ -176,7 +176,7 @@ body {
 .progress-bar { width: 0%; height: 100%; background: var(--accent-color); transition: width 0.5s ease-out; }
 
 .game-controls { flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; }
-.game-controls p { font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem; text-align: center; }
+.game-controls p { font-size: 1.4rem; font-weight: 600; margin-bottom: 1.5rem; text-align: center; }
 .choices-container { display: grid; grid-template-columns: 1fr; gap: 0.75rem; }
 .choice-button {
     background-color: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color);
@@ -315,7 +315,7 @@ body {
 
 /* --- Mobile Layout --- */
 @media (max-width: 768px) {
-    .selection-content { padding: 1rem; margin-top: 100px;}
+    .selection-content { padding: 1rem; height: 100%;}
     .selection-container {overflow: auto;}
     .country-choices { flex-direction: column; gap: 1rem; align-items: center; }
     .country-button { width: 90vw; max-width: 320px; height: 180px; }
@@ -324,6 +324,7 @@ body {
 
     .creator-credit {
         position: static; 
+        padding-bottom: 20px;
         display: block; 
         margin: 3rem auto 2rem auto;
         transform: none; 

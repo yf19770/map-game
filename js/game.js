@@ -16,8 +16,12 @@ export class Game {
         return this.countryData.storageKey + '_stats';
     }
 
-    async start() {
+      async start() {
         this.startTime = Date.now();
+        
+        this.ui.setGameTitle(this.countryData.regionType);
+        this.ui.setQuestionText(this.countryData.regionType);
+        
         await this.ui.renderMap(this.countryData.svgUrl, this.countryData.name);
         this.loadStateDataFromSVG();
         

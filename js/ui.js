@@ -5,6 +5,7 @@ export class UI {
         this.mapContainer = document.getElementById('map-container');
         this.choicesContainer = document.getElementById('choices-container');
         this.questionArea = document.getElementById('question-area');
+        this.questionTextElement = this.questionArea.querySelector('p');
         this.completionMessage = document.getElementById('completion-message');
         this.progressBar = document.getElementById('progress-bar');
         this.progressText = document.getElementById('progress-text'); 
@@ -16,6 +17,20 @@ export class UI {
         this.summaryTime = document.getElementById('summary-time');
         this.summaryAccuracy = document.getElementById('summary-accuracy');
         this.summaryMistakes = document.getElementById('summary-mistakes');
+    }
+    
+    setQuestionText(regionType) {
+        // Use 'country' if the regionType is 'Country', otherwise default to 'region'.
+        const noun = (regionType || '').toLowerCase() === 'country' ? 'country' : 'region';
+        if (this.questionTextElement) {
+            this.questionTextElement.textContent = `The highlighted ${noun} is...`;
+        }
+    }
+
+    setGameTitle(regionType) {
+        if (regionType) {
+            this.gameTitle.textContent = `Identify the ${regionType}`;
+        }
     }
 
     formatDuration(ms) {
