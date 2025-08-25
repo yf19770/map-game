@@ -81,15 +81,30 @@ body {
     box-shadow: 0 20px 40px var(--shadow-color); 
 }
 .country-button .map-bg {
-    position: absolute; inset: 0;
-    background: var(--bg-image) no-repeat center center; 
-    background-size: 85% auto; 
-    opacity: 0.1; 
+    position: absolute;
+    inset: 0;
     margin-bottom: 40px;
-    filter: invert(1); 
+    background-image: var(--bg-image);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 85% auto;
+    
+    /* Start with a low opacity */
+    opacity: 0.15; 
+    
+    /* We don't need blend modes or background-color anymore */
     transition: opacity 0.3s ease;
 }
-.country-button:hover .map-bg { opacity: 0.4; }
+
+.country-button:hover .map-bg {
+    /* On hover, simply increase the opacity */
+    opacity: 0.4;
+}
+
+/* We also need to add a second hover effect for the accent color on the text */
+.country-button:hover .country-name {
+    color: var(--accent-color);
+}
 .country-name {
     position: absolute; bottom: 2rem; left: 0; right: 0;
     font-size: 1.75rem; font-weight: 600;
