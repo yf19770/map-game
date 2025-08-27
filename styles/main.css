@@ -90,7 +90,7 @@ body {
     background-size: 85% auto;
     
     /* Start with a low opacity */
-    opacity: 0.15; 
+    opacity: 0.25; 
     
     /* We don't need blend modes or background-color anymore */
     transition: opacity 0.3s ease;
