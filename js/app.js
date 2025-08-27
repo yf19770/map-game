@@ -14,30 +14,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const showGameScreen = (countryData) => {
         trackEvent('select_country', { country_name: countryData.name });
+
+        selectionContainer.style.animation = 'none';
+        void selectionContainer.offsetHeight; 
+
         selectionContainer.style.animation = 'scaleIn 0.5s ease-in reverse';
 
         setTimeout(() => {
             selectionContainer.classList.add('hidden');
             selectionContainer.style.animation = ''; 
             gameContainer.classList.remove('hidden');
-            gameContainer.style.animation = 'scaleIn 0.5s ease-out';
+            gameContainer.style.animation = 'scaleIn 0.3s ease-out';
             
             game = new Game(ui, countryData); // Pass the shared UI instance
             game.start();
-        }, 450); 
+        }, 300); 
     };
 
     const showSelectionScreen = () => {
         trackEvent('return_to_selection');
+        gameContainer.style.animation = 'none';
+        void gameContainer.offsetHeight;
         gameContainer.style.animation = 'scaleIn 0.5s ease-in reverse';
         
         setTimeout(() => {
             gameContainer.classList.add('hidden');
             gameContainer.style.animation = '';
             selectionContainer.classList.remove('hidden');
-            selectionContainer.style.animation = 'scaleIn 0.5s ease-out';
+            selectionContainer.style.animation = 'scaleIn 0.3s ease-out';
             if (game) game = null;
-        }, 450);
+        }, 300);
     };
 
     countryButtons.forEach(button => {
