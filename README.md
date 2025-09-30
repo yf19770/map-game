@@ -18,7 +18,7 @@
 
 ## 🚀 Live Demo
 
-[**Play Geo Genius**](https://maps-genius.web.app/)
+[**Play Geo Genius**](https://map-game.app)
 
 ## 🛠️ Tech Stack
 
